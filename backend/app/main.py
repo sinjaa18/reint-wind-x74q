@@ -11,7 +11,8 @@ from app.services.analysis import calculate_metrics, parse_datetime, select_fore
 from app.services.data_store import load_analysis_data
 
 app = FastAPI(title="REint Wind Forecast Intelligence API", version="0.1.0")
-_allowed_origins = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if origin.strip()]
+_raw_origins = os.getenv("CORS_ORIGINS", "*")
+_allowed_origins = ["*"] if _raw_origins.strip() == "*" else [origin.strip() for origin in _raw_origins.split(",") if origin.strip()]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed_origins,
@@ -35,11 +36,13 @@ def _float_or_none(value: Any) -> float | None:
 
 
 @app.get("/api/health")
+@app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
 @app.get("/api/meta")
+@app.get("/meta")
 def metadata() -> dict[str, Any]:
     actuals, forecasts, manifest = load_analysis_data()
     return {
@@ -55,6 +58,7 @@ def metadata() -> dict[str, Any]:
 
 
 @app.get("/api/analysis")
+@app.get("/analysis")
 def analysis(cutoff: str = Query(default="12:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")) -> dict[str, Any]:
     actuals, forecasts, manifest = load_analysis_data()
     if not actuals or not forecasts:

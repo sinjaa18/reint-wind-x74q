@@ -9,6 +9,11 @@ def test_health_endpoint():
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
+    # Unprefixed alias for deployment resilience
+    resp_alias = client.get("/health")
+    assert resp_alias.status_code == 200
+    assert resp_alias.json() == {"status": "ok"}
+
 
 def test_meta_endpoint():
     response = client.get("/api/meta")
@@ -19,6 +24,10 @@ def test_meta_endpoint():
     assert data["dataLoaded"] is True
     assert data["actualRows"] == 1488
     assert data["forecastRows"] > 17000
+
+    resp_alias = client.get("/meta")
+    assert resp_alias.status_code == 200
+    assert resp_alias.json()["month"] == "2026-01"
 
 
 def test_analysis_endpoint_and_cutoff_variation():
