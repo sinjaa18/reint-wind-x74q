@@ -11,7 +11,7 @@ from app.services.analysis import calculate_metrics, parse_datetime, select_fore
 from app.services.data_store import load_analysis_data
 
 app = FastAPI(title="REint Wind Forecast Intelligence API", version="0.1.0")
-_allowed_origins = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if origin.strip()]
+_allowed_origins = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if origin.strip()]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed_origins,
@@ -75,10 +75,16 @@ def analysis(cutoff: str = Query(default="12:00", pattern=r"^([01]\d|2[0-3]):[0-
         except (KeyError, ValueError, TypeError):
             continue
 
+    forecast_map: dict[str, list[dict[str, Any]]] = {}
+    for row in forecasts:
+        st = row.get("startTime")
+        if st:
+            forecast_map.setdefault(st, []).append(row)
+
     observations = []
     current = START
     while current < END:
-        chosen = select_forecast_for_interval(current, forecasts, cutoff_time)
+        chosen = select_forecast_for_interval(current, forecast_map, cutoff_time)
         actual = actual_map.get(current)
         forecast_value = _float_or_none(chosen.get("generation")) if chosen else None
         error = forecast_value - actual if forecast_value is not None and actual is not None else None

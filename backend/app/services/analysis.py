@@ -30,17 +30,24 @@ def decision_cutoff(delivery_time: str | datetime, cutoff: time = time(12, 0)) -
 
 def select_forecast_for_interval(
     delivery_time: str | datetime,
-    forecasts: list[dict[str, Any]],
+    forecasts: list[dict[str, Any]] | dict[str | datetime, list[dict[str, Any]]],
     cutoff: time = time(12, 0),
 ) -> dict[str, Any] | None:
     """Choose the latest forecast for this delivery time published on/before cutoff."""
     delivery_utc = parse_datetime(delivery_time)
     deadline = decision_cutoff(delivery_utc, cutoff)
+
+    if isinstance(forecasts, dict):
+        candidates = forecasts.get(delivery_utc) or forecasts.get(delivery_utc.isoformat().replace("+00:00", "Z"), [])
+    else:
+        candidates = [
+            row for row in forecasts
+            if parse_datetime(row.get("startTime", "")) == delivery_utc
+        ]
+
     eligible = []
-    for row in forecasts:
+    for row in candidates:
         try:
-            if parse_datetime(row["startTime"]) != delivery_utc:
-                continue
             published = parse_datetime(row["publishTime"])
             generation = row.get("generation")
             if generation is None or published > deadline:
