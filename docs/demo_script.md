@@ -160,15 +160,41 @@ All metrics, numbers, and dates in this script reflect genuine, verified January
 
 ---
 
-## Recording Checklist for the Presenter
+## Recording Checklist & Video Production Guide
 
-1. **Local Services Check**:
-   - Backend running on `http://127.0.0.1:8000` (`uvicorn app.main:app --port 8000`).
-   - Frontend running on `http://localhost:5173` (`npm run dev`).
-2. **Audio/Screen Recording**:
-   - Set screen resolution to 1080p (1920x1080).
-   - Ensure microphone volume is clear and balanced.
-3. **Pacing**:
-   - Target Part 1 end: 04:30.
-   - Target Part 2 end: 09:00.
-   - Total length strictly under the 10-minute challenge limit.
+### Pre-Recording Setup:
+1. **Live Browser Tabs**:
+   - **Tab 1 (Primary)**: Live Production App: `https://reint-wind-forecast-lyart.vercel.app` (or local fallback `http://localhost:5173`).
+   - **Tab 2**: Public GitHub Repository: `https://github.com/sinjaa18/reint-wind-x74q`.
+   - **Tab 3**: Live API Metadata: `https://reint-wind-forecast-lyart.vercel.app/api/meta`.
+2. **Terminal Preparation**:
+   - Open PowerShell or terminal in project root `C:\Users\SINTU\Desktop\Projects\reint-wind-forecast`.
+   - Pre-clear screen (`clear`).
+   - Ready commands:
+     - `.\backend\.venv\Scripts\python.exe -m pytest backend\tests -v`
+     - `cd frontend && npm test && npm run build && cd ..`
+3. **Screen & Audio Setup**:
+   - Resolution: 1920x1080 (1080p).
+   - Audio: Clear USB microphone or headset.
+   - Recording tool: OBS Studio, Loom, Windows Game Bar (Win+Alt+R), or Zoom local recording.
+
+### Live Screen Actions Timeline:
+| Timestamp | Target Screen | Actions to Perform |
+|---|---|---|
+| **00:00 – 00:45** | Browser (Dashboard) | Introduce the commercial challenge of day-ahead power procurement and imbalance risk. |
+| **00:45 – 01:45** | Browser (KPI Cards) | Point to MAE (2,003 MW), RMSE (2,470 MW), Bias (+1,806 MW), WAPE (17.30%), and Coverage (744/744). Highlight positive overforecasting bias. |
+| **01:45 – 02:45** | Browser (Charts) | Hover over Jan 1 peak on Generation Line Chart to show forecast publish time tooltip. Scroll down to Error Profile Chart to show positive (coral) and negative (cyan) error clusters. |
+| **02:45 – 03:45** | Browser (Controls) | Switch Cutoff dropdown from **12:00 UK** to **08:00 UK**. Show MAE increasing to 2,127 MW (+124.6 MW risk penalty). |
+| **03:45 – 04:30** | Browser (Table) | Highlight Data Coverage banner (744 hourly vs 1,488 half-hourly actuals). Filter table, show `:30` unforecasted intervals, click **Export CSV**. |
+| **04:30 – 05:30** | VS Code / Editor | Show project architecture (`backend/app/main.py`, `frontend/src/App.tsx`, `vercel.json`). |
+| **05:30 – 06:30** | VS Code | Open `backend/scripts/fetch_january_data.py` (Elexon streams) and `analysis.py` (`decision_cutoff()` London timezone logic). |
+| **06:30 – 07:30** | VS Code | Show `backend/app/main.py` lines 78–88 explaining the $O(1)$ dictionary lookup optimization (12,000ms -> 20ms). |
+| **07:30 – 08:30** | Terminal | Run `pytest backend\tests -v` (15 passing tests) and `cd frontend && npm test && npm run build`. |
+| **08:30 – 09:00** | Browser (GitHub/Vercel) | Show GitHub repository (`https://github.com/sinjaa18/reint-wind-x74q`) and conclusion. |
+
+### Post-Recording YouTube Upload:
+1. Export the MP4 video (ensure total runtime is **under 10 minutes**, ideally 8:30–9:30).
+2. Go to [YouTube Studio](https://studio.youtube.com).
+3. Upload video with Title: `REint Wind Forecast Intelligence - Technical & Commercial Demonstration`.
+4. Set Visibility to **Unlisted** (anyone with the link can view, but not indexed publicly).
+5. Copy the unlisted URL and add it to `README.md` and the challenge submission form.

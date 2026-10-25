@@ -23,3 +23,5 @@ frontend/dist/
 backend/data/raw/*.json
 !backend/data/processed/*.json
 !backend/data/processed/.gitkeep
+
+.vercel

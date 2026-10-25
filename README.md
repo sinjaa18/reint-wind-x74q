@@ -7,6 +7,21 @@
 [![Vite](https://img.shields.io/badge/Vite-6.0-646cff.svg)](https://vitejs.dev/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ed.svg)](https://www.docker.com/)
 
+---
+
+### Challenge Deliverables & Verified Links
+
+- **Live Deployed Application**: [https://reint-wind-forecast-lyart.vercel.app](https://reint-wind-forecast-lyart.vercel.app)
+- **Public GitHub Repository**: [https://github.com/sinjaa18/reint-wind-x74q](https://github.com/sinjaa18/reint-wind-x74q)
+- **Production API Endpoints**:
+  - Health Check: `https://reint-wind-forecast-lyart.vercel.app/api/health`
+  - Metadata: `https://reint-wind-forecast-lyart.vercel.app/api/meta`
+  - Analysis (12:00 Cutoff): `https://reint-wind-forecast-lyart.vercel.app/api/analysis?cutoff=12:00`
+  - Analysis (08:00 Cutoff): `https://reint-wind-forecast-lyart.vercel.app/api/analysis?cutoff=08:00`
+- **Video Walkthrough Demonstration**: Complete 9-minute two-part recording script and presenter checklist at [`docs/demo_script.md`](docs/demo_script.md) (pending YouTube recording upload).
+
+---
+
 An executive intelligence platform for comparing UK national wind-generation forecasts against actual settlement outturn for **January 2026**, built exclusively with verified **Elexon BMRS** open energy datasets (`FUELHH` and `WINDFOR`).
 
 Designed specifically for day-ahead power procurement desks and energy risk analysts, this application reconstructs the exact operational forecast available prior to commercial gate closure, evaluating forecast accuracy without hindsight distortion or synthetic data fabrication.
