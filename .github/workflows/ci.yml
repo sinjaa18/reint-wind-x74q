@@ -11,8 +11,10 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r backend/requirements.txt
-      - run: pytest -q
-        working-directory: backend
+      - name: Run backend tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend:${{ github.workspace }}
+        run: pytest backend/tests -v
   frontend-build:
     runs-on: ubuntu-latest
     steps:
