@@ -4,7 +4,19 @@ import json
 from pathlib import Path
 from typing import Any
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "processed"
+def _resolve_data_dir() -> Path:
+    candidates = [
+        Path(__file__).resolve().parents[2] / "data" / "processed",
+        Path.cwd() / "backend" / "data" / "processed",
+        Path.cwd() / "data" / "processed",
+    ]
+    for candidate in candidates:
+        if candidate.exists() and (candidate / "actuals.json").exists():
+            return candidate
+    return candidates[0]
+
+
+DATA_DIR = _resolve_data_dir()
 
 
 def read_json(filename: str, default: Any = None) -> Any:

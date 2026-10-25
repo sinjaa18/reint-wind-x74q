@@ -1,6 +1,6 @@
 import type { AnalysisResponse, MetaResponse } from './types';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:8000';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '';
 
 async function requestJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   const url = `${API_BASE}${path}`;
@@ -11,7 +11,8 @@ async function requestJson<T>(path: string, signal?: AbortSignal): Promise<T> {
     if (err instanceof DOMException && err.name === 'AbortError') {
       throw err;
     }
-    throw new Error(`Unable to reach backend API at ${API_BASE}. Ensure FastAPI server is running on port 8000.`);
+    const target = API_BASE ? API_BASE : 'the local/production server';
+    throw new Error(`Unable to reach backend API at ${target}. Ensure the API service is running.`);
   }
 
   if (!response.ok) {
