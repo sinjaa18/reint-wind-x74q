@@ -18,7 +18,7 @@ frontend/dist/
 .vscode/
 .idea/
 
-# Generated Elexon data (keep only if intentionally committed)
+# Generated Elexon data (raw excluded, processed committed for deployment)
 backend/data/raw/*.json
-backend/data/processed/*.json
+!backend/data/processed/*.json
 !backend/data/processed/.gitkeep

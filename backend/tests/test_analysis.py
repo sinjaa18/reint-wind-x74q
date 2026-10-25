@@ -47,3 +47,41 @@ def test_metrics_empty_dataset_are_null_not_zero():
 def test_wape_undefined_when_actual_sum_is_zero():
     result = calculate_metrics([{"forecastGeneration": 10, "actualGeneration": 0}])
     assert result["wape"] is None
+
+
+def test_missing_forecast_intervals_excluded_from_metrics_without_distortion():
+    observations = [
+        {"startTime": "2026-01-01T00:00:00Z", "forecastGeneration": 1000.0, "actualGeneration": 900.0, "error": 100.0},
+        {"startTime": "2026-01-01T00:30:00Z", "forecastGeneration": None, "actualGeneration": 920.0, "error": None},
+        {"startTime": "2026-01-01T01:00:00Z", "forecastGeneration": 1100.0, "actualGeneration": 1200.0, "error": -100.0},
+        {"startTime": "2026-01-01T01:30:00Z", "forecastGeneration": None, "actualGeneration": 1180.0, "error": None},
+    ]
+    result = calculate_metrics(observations)
+    assert result["sampleSize"] == 2
+    assert result["mae"] == 100.0
+    assert result["rmse"] == 100.0
+    assert result["bias"] == 0.0
+    assert result["wape"] == pytest.approx(100.0 * 200.0 / 2100.0, abs=0.001)
+
+
+def test_forecast_selection_with_varying_cutoffs():
+    forecasts = [
+        {"startTime": "2026-01-10T14:00:00Z", "publishTime": "2026-01-09T06:00:00Z", "generation": 5000},
+        {"startTime": "2026-01-10T14:00:00Z", "publishTime": "2026-01-09T11:00:00Z", "generation": 5500},
+        {"startTime": "2026-01-10T14:00:00Z", "publishTime": "2026-01-09T16:00:00Z", "generation": 6000},
+    ]
+    # Cutoff at 08:00 selects 06:00 publication (5000)
+    fc_8 = select_forecast_for_interval("2026-01-10T14:00:00Z", forecasts, time(8, 0))
+    assert fc_8 is not None and fc_8["generation"] == 5000
+
+    # Cutoff at 12:00 selects 11:00 publication (5500)
+    fc_12 = select_forecast_for_interval("2026-01-10T14:00:00Z", forecasts, time(12, 0))
+    assert fc_12 is not None and fc_12["generation"] == 5500
+
+    # Cutoff at 17:00 selects 16:00 publication (6000)
+    fc_17 = select_forecast_for_interval("2026-01-10T14:00:00Z", forecasts, time(17, 0))
+    assert fc_17 is not None and fc_17["generation"] == 6000
+
+    # Cutoff before any publication returns None
+    fc_early = select_forecast_for_interval("2026-01-10T14:00:00Z", forecasts, time(5, 0))
+    assert fc_early is None

@@ -1,0 +1,38 @@
+{
+  "generatedAtUtc": "2026-10-25T13:17:08.586292Z",
+  "deliveryWindow": {
+    "from": "2026-01-01T00:00:00Z",
+    "toExclusive": "2026-02-01T00:00:00Z"
+  },
+  "forecastPublishWindow": {
+    "from": "2025-12-31T00:00:00Z",
+    "toExclusive": "2026-02-01T00:00:00Z"
+  },
+  "decisionCutoffDefault": "12:00 Europe/London on the previous calendar day (assumption)",
+  "resolutionNote": "Elexon WINDFOR forecasts are natively published on an hourly cadence (at :00). The nominal 1,488 calendar intervals are half-hourly (:00 and :30), of which all 744 hourly delivery intervals have forecast coverage, and the 744 half-hourly (:30) intervals have no forecast published by Elexon.",
+  "expectedHalfHourlyIntervals": 1488,
+  "expectedHourlyIntervals": 744,
+  "actuals": {
+    "rowsFetched": 1488,
+    "invalidOrMissingValues": 0,
+    "nonWindRowsExcluded": 0,
+    "uniqueIntervals": 1488,
+    "missingIntervals": 0,
+    "coveragePercent": 100.0
+  },
+  "forecasts": {
+    "rowsFetched": 18688,
+    "invalidRows": 0,
+    "outsideJanuaryDeliveryWindow": 784,
+    "uniqueStartPublishPairs": 17904,
+    "deliveryIntervalsCovered": 744,
+    "deliveryIntervalsWithoutAnyForecast": 744,
+    "hourlyCoveragePercent": 100.0,
+    "halfHourlyCoveragePercent": 50.0
+  },
+  "sourceEndpoints": {
+    "actuals": "https://data.elexon.co.uk/bmrs/api/v1/datasets/FUELHH/stream",
+    "forecasts": "https://data.elexon.co.uk/bmrs/api/v1/datasets/WINDFOR/stream"
+  },
+  "attribution": "Contains BMRS data © Elexon Limited copyright and database right"
+}

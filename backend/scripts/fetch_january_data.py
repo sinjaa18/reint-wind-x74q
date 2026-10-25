@@ -20,7 +20,7 @@ UK = ZoneInfo("Europe/London")
 MONTH_START = datetime(2026, 1, 1, tzinfo=UTC)
 MONTH_END = datetime(2026, 2, 1, tzinfo=UTC)  # exclusive
 FORECAST_PUBLISH_START = datetime(2025, 12, 31, tzinfo=UTC)
-FORECAST_PUBLISH_END = datetime(2026, 1, 31, tzinfo=UTC)  # exclusive
+FORECAST_PUBLISH_END = datetime(2026, 2, 1, tzinfo=UTC)  # includes all January 31 publications (exclusive of Feb 1)
 
 
 class ElexonFetchError(RuntimeError):
@@ -205,7 +205,8 @@ def main() -> int:
     write_json(PROCESSED_DIR / "actuals.json", actuals)
     write_json(PROCESSED_DIR / "forecasts.json", forecasts)
 
-    expected = int((MONTH_END - MONTH_START).total_seconds() // 1800)
+    expected_half_hourly = int((MONTH_END - MONTH_START).total_seconds() // 1800)
+    expected_hourly = 31 * 24  # 744 hourly intervals
     actual_starts = {parse_dt(row["startTime"]) for row in actuals}
     forecast_starts = {parse_dt(row["startTime"]) for row in forecasts}
     manifest = {
@@ -213,9 +214,23 @@ def main() -> int:
         "deliveryWindow": {"from": MONTH_START.isoformat().replace("+00:00", "Z"), "toExclusive": MONTH_END.isoformat().replace("+00:00", "Z")},
         "forecastPublishWindow": {"from": FORECAST_PUBLISH_START.isoformat().replace("+00:00", "Z"), "toExclusive": FORECAST_PUBLISH_END.isoformat().replace("+00:00", "Z")},
         "decisionCutoffDefault": "12:00 Europe/London on the previous calendar day (assumption)",
-        "expectedHalfHourlyIntervals": expected,
-        "actuals": {"rowsFetched": len(actual_raw), **actual_quality, "missingIntervals": expected - len(actual_starts)},
-        "forecasts": {"rowsFetched": len(forecast_raw), **forecast_quality, "deliveryIntervalsCovered": len(forecast_starts), "deliveryIntervalsWithoutAnyForecast": expected - len(forecast_starts)},
+        "resolutionNote": "Elexon WINDFOR forecasts are natively published on an hourly cadence (at :00). The nominal 1,488 calendar intervals are half-hourly (:00 and :30), of which all 744 hourly delivery intervals have forecast coverage, and the 744 half-hourly (:30) intervals have no forecast published by Elexon.",
+        "expectedHalfHourlyIntervals": expected_half_hourly,
+        "expectedHourlyIntervals": expected_hourly,
+        "actuals": {
+            "rowsFetched": len(actual_raw),
+            **actual_quality,
+            "missingIntervals": expected_half_hourly - len(actual_starts),
+            "coveragePercent": round(len(actual_starts) / expected_half_hourly * 100, 2),
+        },
+        "forecasts": {
+            "rowsFetched": len(forecast_raw),
+            **forecast_quality,
+            "deliveryIntervalsCovered": len(forecast_starts),
+            "deliveryIntervalsWithoutAnyForecast": expected_half_hourly - len(forecast_starts),
+            "hourlyCoveragePercent": round(len(forecast_starts) / expected_hourly * 100, 2),
+            "halfHourlyCoveragePercent": round(len(forecast_starts) / expected_half_hourly * 100, 2),
+        },
         "sourceEndpoints": {
             "actuals": f"{API_BASE}/datasets/FUELHH/stream",
             "forecasts": f"{API_BASE}/datasets/WINDFOR/stream",
