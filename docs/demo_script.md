@@ -145,13 +145,13 @@ All metrics, numbers, and dates in this script reflect genuine, verified January
   > - `docker-compose.yml` validated via `docker compose config`."
 
 ### [08:30 – 09:00] Deployment & Conclusion
-- **Visual**: Show `vercel.json`, `render.yaml`, and git log in the terminal.
+- **Visual**: Show `vercel.json`, `docker-compose.yml`, and git log in the terminal.
 - **Presenter**:
   > "Finally, let's look at deployment.
   >
-  > The repository includes complete deployment manifests:
-  > - A root `vercel.json` and `api/index.py` for deploying as a serverless ASGI application.
-  > - A `render.yaml` blueprint for dual-service containerless deployment.
+  > The repository includes complete deployment and orchestration configuration:
+  > - A root `vercel.json` and `api/index.py` for deploying as a serverless ASGI application on Vercel.
+  > - A reproducible `docker-compose.yml` for multi-container local evaluation.
   > - The processed historical datasets are bundled directly in `backend/data/processed/`, ensuring the deployed application runs instantly with zero external database dependencies.
   >
   > Our Git repository is strictly managed using conventional commits, with clean checkpoints for backend setup, data ingestion, dashboard features, and deployment configurations.
