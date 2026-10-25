@@ -49,3 +49,8 @@ def test_analysis_endpoint_and_cutoff_variation():
 def test_analysis_invalid_cutoff():
     resp = client.get("/api/analysis?cutoff=invalid")
     assert resp.status_code == 422
+
+
+def test_serverless_entry_point():
+    from api.index import app as serverless_app
+    assert serverless_app.title == "REint Wind Forecast Intelligence API"
