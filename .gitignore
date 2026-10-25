@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.exe
+*.zip
+
+# Node
+node_modules/
+frontend/dist/
+
+# Environment / editor
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+
+# Generated Elexon data (keep only if intentionally committed)
+backend/data/raw/*.json
+backend/data/processed/*.json
+!backend/data/processed/.gitkeep
